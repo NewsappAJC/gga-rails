@@ -9,4 +9,21 @@
 
 # Make sure your secret_key_base is kept private
 # if you're sharing your code publicly.
-GgaRails::Application.config.secret_key_base = '2a217a86d3ea437bfc6c799907548ab46f512f621def847f5f0255a931d650a65b43fa8bc193543e0963eb2adf77b7bb0e024c9e4a8267976b8f18c76ea66fe9'
+# GgaRails::Application.config.secret_key_base = '2a217a86d3ea437bfc6c799907548ab46f512f621def847f5f0255a931d650a65b43fa8bc193543e0963eb2adf77b7bb0e024c9e4a8267976b8f18c76ea66fe9'
+
+require 'securerandom'
+
+def secure_token
+  token_file = Rails.root.join('.secret')
+  if File.exist?(token_file)
+    # Use the existing token.
+    File.read(token_file).chomp
+  else
+    # Generate a new token and store it in token_file.
+    token = SecureRandom.hex(64)
+    File.write(token_file, token)
+    token
+  end
+end
+
+SampleApp::Application.config.secret_key_base = secure_token
